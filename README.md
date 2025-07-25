@@ -26,6 +26,7 @@
 
 
 git clone https://github.com/tonykuriakose/leepcodes-frontend
+
 cd leepcodes-frontend
 
 ### 2. Install dependencies
@@ -46,15 +47,5 @@ const API_URL = "http://localhost:5000/api";
 
 * **superadmin**: Access to all features including product delete and admin creation.
 * **admin**: Can only add/edit/view products and view cart.
-
-## 📂 Folder Structure
-
-```
-.
-├── components
-├── pages
-├── services
-├── utils
-└── App.jsx
 
 
