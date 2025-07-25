@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
-/* Add these styles to your existing index.css or create a new CSS file */
 
-/* Button Base Styles */
+
 .btn-primary {
   @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200;
 }
@@ -15,12 +14,11 @@
   @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200;
 }
 
-/* Input Styles */
 .input {
   @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-200;
 }
 
-/* Custom primary color variables if needed */
+
 :root {
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
@@ -34,7 +32,7 @@
   --color-primary-900: #1e3a8a;
 }
 
-/* Utility classes for primary colors */
+
 .text-primary-600 {
   color: var(--color-primary-600);
 }

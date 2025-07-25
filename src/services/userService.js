@@ -121,7 +121,7 @@ const userService = {
     }
   },
 
-  // Get user statistics 
+  
   getUserStats: async () => {
     try {
       const response = await api.get('/users/stats');
@@ -140,7 +140,7 @@ const userService = {
     }
   },
 
-  // Search users 
+  
   searchUsers: async (searchParams) => {
     try {
       const { q, role, page = 1, limit = 10 } = searchParams;

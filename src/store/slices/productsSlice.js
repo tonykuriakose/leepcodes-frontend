@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { productService } from '../../services/index.js';
 
-// Initial state
+
 const initialState = {
   products: [],
   currentProduct: null,
@@ -20,7 +20,7 @@ const initialState = {
   searchError: null,
 };
 
-// Async thunks for product operations
+
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async (params = {}, { rejectWithValue }) => {
@@ -146,30 +146,30 @@ export const fetchLowStockProducts = createAsyncThunk(
   }
 );
 
-// Products slice
+
 const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    // Clear current product
+  
     clearCurrentProduct: (state) => {
       state.currentProduct = null;
     },
     
-    // Clear errors
+    
     clearError: (state) => {
       state.error = null;
       state.searchError = null;
     },
     
-    // Clear search results
+    
     clearSearchResults: (state) => {
       state.searchResults = [];
       state.searchPagination = null;
       state.searchError = null;
     },
     
-    // Update product in list (after edit)
+    
     updateProductInList: (state, action) => {
       const index = state.products.findIndex(p => p.id === action.payload.id);
       if (index !== -1) {
@@ -177,13 +177,13 @@ const productsSlice = createSlice({
       }
     },
     
-    // Remove product from list (after delete)
+  
     removeProductFromList: (state, action) => {
       state.products = state.products.filter(p => p.id !== action.payload);
     },
   },
   extraReducers: (builder) => {
-    // Fetch products
+    
     builder
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
@@ -200,7 +200,7 @@ const productsSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Fetch single product
+    
     builder
       .addCase(fetchProductById.pending, (state) => {
         state.loading = true;
@@ -216,7 +216,7 @@ const productsSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Create product
+    
     builder
       .addCase(createProduct.pending, (state) => {
         state.loading = true;
@@ -224,7 +224,7 @@ const productsSlice = createSlice({
       })
       .addCase(createProduct.fulfilled, (state, action) => {
         state.loading = false;
-        state.products.unshift(action.payload); // Add to beginning
+        state.products.unshift(action.payload);
         state.error = null;
       })
       .addCase(createProduct.rejected, (state, action) => {
@@ -232,7 +232,7 @@ const productsSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Update product
+  
     builder
       .addCase(updateProduct.pending, (state) => {
         state.loading = true;
@@ -254,7 +254,7 @@ const productsSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Delete product
+    
     builder
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
@@ -273,7 +273,7 @@ const productsSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Search products
+    
     builder
       .addCase(searchProducts.pending, (state) => {
         state.searchLoading = true;
@@ -290,7 +290,7 @@ const productsSlice = createSlice({
         state.searchError = action.payload;
       });
 
-    // Fetch low stock products
+    
     builder
       .addCase(fetchLowStockProducts.pending, (state) => {
         state.loading = true;
@@ -308,7 +308,7 @@ const productsSlice = createSlice({
   },
 });
 
-// Export actions
+
 export const { 
   clearCurrentProduct, 
   clearError, 
@@ -317,7 +317,7 @@ export const {
   removeProductFromList 
 } = productsSlice.actions;
 
-// Export selectors
+
 export const selectProducts = (state) => state.products.products;
 export const selectCurrentProduct = (state) => state.products.currentProduct;
 export const selectLowStockProducts = (state) => state.products.lowStockProducts;
@@ -329,5 +329,5 @@ export const selectSearchLoading = (state) => state.products.searchLoading;
 export const selectSearchError = (state) => state.products.searchError;
 export const selectSearchPagination = (state) => state.products.searchPagination;
 
-// Export reducer
+
 export default productsSlice.reducer;

@@ -1,19 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { cartService } from '../../services/index.js';
 
-// Initial state
+
 const initialState = {
   cart: null,
-  allCarts: [], // For admin view
+  allCarts: [], 
   allCartsPagination: null,
   loading: false,
   adminLoading: false,
   error: null,
   adminError: null,
-  lastAction: null, // Track last action for UI feedback
+  lastAction: null, 
 };
 
-// Async thunks for cart operations
+
 export const fetchCart = createAsyncThunk(
   'cart/fetchCart',
   async (_, { rejectWithValue }) => {
@@ -129,7 +129,7 @@ export const fetchAllCarts = createAsyncThunk(
   }
 );
 
-// Helper function to calculate cart totals
+
 const calculateCartTotals = (cart) => {
   if (!cart || !cart.items) return cart;
 
@@ -143,30 +143,29 @@ const calculateCartTotals = (cart) => {
   };
 };
 
-// Cart slice
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    // Clear errors
     clearError: (state) => {
       state.error = null;
       state.adminError = null;
     },
     
-    // Clear last action (for UI feedback)
+    
     clearLastAction: (state) => {
       state.lastAction = null;
     },
     
-    // Clear cart (for logout)
+    
     clearCartState: (state) => {
       state.cart = null;
       state.error = null;
       state.lastAction = null;
     },
     
-    // Optimistic update for quantity change
+    
     optimisticUpdateQuantity: (state, action) => {
       const { itemId, quantity } = action.payload;
       if (state.cart && state.cart.items) {
@@ -179,7 +178,7 @@ const cartSlice = createSlice({
       }
     },
     
-    // Optimistic remove item
+    
     optimisticRemoveItem: (state, action) => {
       const itemId = action.payload;
       if (state.cart && state.cart.items) {
@@ -189,7 +188,6 @@ const cartSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Fetch cart
     builder
       .addCase(fetchCart.pending, (state) => {
         state.loading = true;
@@ -205,7 +203,7 @@ const cartSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Add to cart
+    
     builder
       .addCase(addToCart.pending, (state) => {
         state.loading = true;
@@ -216,7 +214,6 @@ const cartSlice = createSlice({
         state.loading = false;
         state.lastAction = 'added';
         state.error = null;
-        // Refetch cart to get updated data
       })
       .addCase(addToCart.rejected, (state, action) => {
         state.loading = false;
@@ -224,7 +221,7 @@ const cartSlice = createSlice({
         state.lastAction = 'error';
       });
 
-    // Update cart item
+    
     builder
       .addCase(updateCartItem.pending, (state) => {
         state.loading = true;
@@ -236,7 +233,6 @@ const cartSlice = createSlice({
         state.lastAction = 'updated';
         state.error = null;
         
-        // Update the specific item in cart
         if (state.cart && state.cart.items) {
           const item = state.cart.items.find(item => item.id === action.payload.itemId);
           if (item) {
@@ -252,7 +248,7 @@ const cartSlice = createSlice({
         state.lastAction = 'error';
       });
 
-    // Remove cart item
+    
     builder
       .addCase(removeCartItem.pending, (state) => {
         state.loading = true;
@@ -264,7 +260,6 @@ const cartSlice = createSlice({
         state.lastAction = 'removed';
         state.error = null;
         
-        // Remove item from cart
         if (state.cart && state.cart.items) {
           state.cart.items = state.cart.items.filter(item => item.id !== action.payload.itemId);
           state.cart = calculateCartTotals(state.cart);
@@ -276,7 +271,7 @@ const cartSlice = createSlice({
         state.lastAction = 'error';
       });
 
-    // Clear cart
+  
     builder
       .addCase(clearCart.pending, (state) => {
         state.loading = true;
@@ -300,7 +295,7 @@ const cartSlice = createSlice({
         state.lastAction = 'error';
       });
 
-    // Fetch all carts (admin)
+    
     builder
       .addCase(fetchAllCarts.pending, (state) => {
         state.adminLoading = true;
@@ -319,7 +314,7 @@ const cartSlice = createSlice({
   },
 });
 
-// Export actions
+
 export const { 
   clearError, 
   clearLastAction, 
@@ -328,7 +323,6 @@ export const {
   optimisticRemoveItem 
 } = cartSlice.actions;
 
-// Export selectors
 export const selectCart = (state) => state.cart.cart;
 export const selectCartItems = (state) => state.cart.cart?.items || [];
 export const selectCartTotalItems = (state) => state.cart.cart?.totalItems || 0;
@@ -341,5 +335,5 @@ export const selectAllCartsLoading = (state) => state.cart.adminLoading;
 export const selectAllCartsError = (state) => state.cart.adminError;
 export const selectAllCartsPagination = (state) => state.cart.allCartsPagination;
 
-// Export reducer
+
 export default cartSlice.reducer;

@@ -2,14 +2,13 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppDispatch, useAuth } from './store/hooks.js';
 import { checkAuthStatus } from './store/slices/authSlice.js';
-
-// Import pages
 import LoginPage from './pages/LoginPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import ProductsPage from './pages/ProductsPage.jsx';
 import LoadingSpinner from './components/LoadingSpinner.jsx';
+import CartPage from './pages/CartPage.jsx';
 
-// Protected Route Component
+
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   
@@ -27,7 +26,6 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
-// Public Route Component (redirect to dashboard if already authenticated)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   
@@ -48,13 +46,9 @@ const PublicRoute = ({ children }) => {
 function App() {
   const dispatch = useAppDispatch();
   const { loading } = useAuth();
-
-  // Check authentication status on app load
   useEffect(() => {
     dispatch(checkAuthStatus());
   }, [dispatch]);
-
-  // Show loading screen while checking auth
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -70,7 +64,6 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Public Routes */}
           <Route 
             path="/login" 
             element={
@@ -99,28 +92,17 @@ function App() {
             } 
           />
 
-          {/* Cart Route (placeholder for now) */}
+          
           <Route 
             path="/cart" 
             element={
               <ProtectedRoute>
-                <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                  <div className="text-center">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-4">Cart Page</h1>
-                    <p className="text-gray-600 mb-4">Cart functionality coming soon!</p>
-                    <button 
-                      onClick={() => window.history.back()}
-                      className="btn-primary"
-                    >
-                      Go Back
-                    </button>
-                  </div>
-                </div>
+                <CartPage />
               </ProtectedRoute>
             } 
           />
 
-          {/* Users Route (placeholder for now) */}
+        
           <Route 
             path="/users" 
             element={
@@ -141,10 +123,10 @@ function App() {
             } 
           />
 
-          {/* Default redirect */}
+          
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-          {/* 404 Route */}
+        
           <Route 
             path="*" 
             element={

@@ -8,7 +8,7 @@ const LoginPage = () => {
   const dispatch = useAppDispatch();
   const { loading, error, isAuthenticated } = useAuth();
 
-  // Form state
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -16,19 +16,19 @@ const LoginPage = () => {
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
-  // Clear errors when component mounts
+  
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // Redirect if already authenticated
+  
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
-  // Handle input changes
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -36,7 +36,7 @@ const LoginPage = () => {
       [name]: value
     }));
     
-    // Clear field error when user starts typing
+    
     if (formErrors[name]) {
       setFormErrors(prev => ({
         ...prev,
@@ -45,18 +45,18 @@ const LoginPage = () => {
     }
   };
 
-  // Validate form
+  
   const validateForm = () => {
     const errors = {};
 
-    // Email validation
+  
     if (!formData.email.trim()) {
       errors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = 'Please enter a valid email address';
     }
 
-    // Password validation
+    
     if (!formData.password) {
       errors.password = 'Password is required';
     } else if (formData.password.length < 6) {
@@ -67,35 +67,33 @@ const LoginPage = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle form submission - FIXED VERSION
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate form first
+    
     if (!validateForm()) {
       return;
     }
 
     try {
-      // Dispatch login action
+      
       const result = await dispatch(loginUser({
         email: formData.email,
         password: formData.password
       })).unwrap();
 
-      // DEBUG LOGS - These will show in browser console
-      console.log('🎉 Login successful:', result);
-      console.log('🔑 Token stored:', localStorage.getItem('token'));
+      
+    
 
-      // Navigate to dashboard on success
+      
       navigate('/dashboard', { replace: true });
     } catch (error) {
-      // Error handling is already done by Redux slice
-      console.error('❌ Login failed:', error);
+
+      console.error('Login failed:', error);
     }
   };
 
-  // Demo credentials handler
+  
   const handleDemoLogin = (role) => {
     const demoCredentials = {
       superadmin: {
@@ -124,7 +122,7 @@ const LoginPage = () => {
           </p>
         </div>
 
-        {/* Demo Credentials */}
+     
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="text-sm font-medium text-blue-800 mb-2">
             Demo Credentials:
@@ -150,7 +148,7 @@ const LoginPage = () => {
         {/* Login Form */}
         <div className="bg-white shadow-lg rounded-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Global Error */}
+        
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-md p-4">
                 <div className="flex">
@@ -166,7 +164,7 @@ const LoginPage = () => {
               </div>
             )}
 
-            {/* Email Field */}
+          
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
@@ -186,7 +184,7 @@ const LoginPage = () => {
               )}
             </div>
 
-            {/* Password Field */}
+        
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
@@ -224,7 +222,7 @@ const LoginPage = () => {
               )}
             </div>
 
-            {/* Submit Button */}
+      
             <button
               type="submit"
               disabled={loading}
@@ -240,12 +238,6 @@ const LoginPage = () => {
               )}
             </button>
           </form>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center text-sm text-gray-500">
-          <p>Product & Cart Management System</p>
-          <p className="mt-1">Admin Access Only</p>
         </div>
       </div>
     </div>

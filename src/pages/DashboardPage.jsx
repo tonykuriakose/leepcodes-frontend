@@ -11,24 +11,23 @@ const DashboardPage = () => {
   const { totalItems, totalAmount } = useCart();
   const permissions = usePermissions();
 
-  // Fetch cart on mount
+  
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
 
-  // Handle logout
+  
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
       navigate('/login', { replace: true });
     } catch (error) {
       console.error('Logout error:', error);
-      // Navigate anyway
       navigate('/login', { replace: true });
     }
   };
 
-  // Navigation handlers
+  
   const navigateToProducts = () => {
     navigate('/products');
   };
@@ -54,7 +53,6 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -65,7 +63,7 @@ const DashboardPage = () => {
                 </h1>
               </div>
               
-              {/* Navigation Links */}
+            
               <nav className="hidden md:flex space-x-6">
                 <button
                   onClick={() => navigate('/dashboard')}
@@ -102,7 +100,7 @@ const DashboardPage = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              {/* User Info */}
+            
               <div className="flex items-center space-x-2">
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">{user?.email}</p>
@@ -117,7 +115,7 @@ const DashboardPage = () => {
                 </div>
               </div>
 
-              {/* Logout Button */}
+            
               <button
                 onClick={handleLogout}
                 className="btn-secondary text-sm"
@@ -129,9 +127,9 @@ const DashboardPage = () => {
         </div>
       </header>
 
-      {/* Main Content */}
+    
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
+  
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Welcome back, {user?.email?.split('@')[0]}! 👋
@@ -141,9 +139,9 @@ const DashboardPage = () => {
           </p>
         </div>
 
-        {/* Stats Cards */}
+      
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Cart Stats */}
+        
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -163,7 +161,7 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Role Badge */}
+      
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -185,7 +183,7 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Status */}
+        
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -204,9 +202,9 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Feature Cards */}
+  
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Products Management */}
+          
           <div 
             onClick={navigateToProducts}
             className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer group"
@@ -235,7 +233,7 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Cart Management */}
+          
           <div 
             onClick={navigateToCart}
             className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer group"
@@ -261,7 +259,7 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* User Management (Super Admin Only) */}
+        
           {permissions.canViewUsers && (
             <div 
               onClick={navigateToUsers}
@@ -287,7 +285,7 @@ const DashboardPage = () => {
             </div>
           )}
 
-          {/* Quick Actions */}
+          
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center mb-4">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -324,31 +322,6 @@ const DashboardPage = () => {
             </div>
           </div>
         </div>
-
-        {/* Debug Info (Development Only) */}
-        {import.meta.env.DEV && (
-          <div className="mt-8 p-4 bg-gray-100 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">🔧 Debug Info</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div>
-                <strong>User:</strong>
-                <pre className="mt-1 text-gray-600">{JSON.stringify(user, null, 2)}</pre>
-              </div>
-              <div>
-                <strong>Permissions:</strong>
-                <pre className="mt-1 text-gray-600">
-                  {JSON.stringify({
-                    canCreateProduct: permissions.canCreateProduct,
-                    canDeleteProduct: permissions.canDeleteProduct,
-                    canViewUsers: permissions.canViewUsers,
-                    isSuperAdmin: permissions.isSuperAdmin,
-                    isAdmin: permissions.isAdmin
-                  }, null, 2)}
-                </pre>
-              </div>
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );

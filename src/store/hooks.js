@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { selectCart,selectCartItems,selectCartTotalItems,selectCartTotalAmount,selectCartLoading,selectCartError} from './slices/cartSlice.js';
 
-// Custom hooks for typed usage
+
 export const useAppDispatch = () => useDispatch();
 export const useAppSelector = useSelector;
 
-// Auth-specific hooks
+// Auth hook
 export const useAuth = () => {
   return useAppSelector((state) => ({
     user: state.auth.user,
@@ -16,18 +17,26 @@ export const useAuth = () => {
   }));
 };
 
-// Cart-specific hooks
+// hook for cart
 export const useCart = () => {
-  return useAppSelector((state) => ({
-    items: state.cart.items,
-    totalItems: state.cart.totalItems,
-    totalAmount: state.cart.totalAmount,
-    loading: state.cart.loading,
-    error: state.cart.error,
-  }));
+  const cart = useSelector(selectCart);
+  const items = useSelector(selectCartItems);
+  const totalItems = useSelector(selectCartTotalItems);
+  const totalAmount = useSelector(selectCartTotalAmount);
+  const loading = useSelector(selectCartLoading);
+  const error = useSelector(selectCartError);
+  
+  return {
+    cart,
+    items,
+    totalItems,
+    totalAmount,
+    loading,
+    error
+  };
 };
 
-// Products-specific hooks
+// Products hook
 export const useProducts = () => {
   return useAppSelector((state) => ({
     products: state.products.products,
@@ -43,11 +52,8 @@ export const usePermissions = () => {
   const { user } = useAuth();
   
   return {
-    // Role checks
     isSuperAdmin: user?.role === 'superadmin',
     isAdmin: user?.role === 'admin' || user?.role === 'superadmin',
-    
-    // Permission checks
     canCreateProduct: user?.role === 'admin' || user?.role === 'superadmin',
     canEditProduct: user?.role === 'admin' || user?.role === 'superadmin',
     canDeleteProduct: user?.role === 'admin' || user?.role === 'superadmin',
