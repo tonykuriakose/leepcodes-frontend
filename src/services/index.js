@@ -1,8 +1,16 @@
 
 
 
-export { default as api, setAuthToken, getAuthToken, clearAuth } from './api.js';
-export { default as authService } from './authService.js';
-export { default as productService } from './productService.js';
-export { default as cartService } from './cartService.js';
-export { default as userService } from './userService.js';
+// Import all services
+import authService from './authService.js';
+import productService from './productService.js';
+import cartService from './cartService.js';
+import userService from './userService.js';
+
+// Export all services as named exports
+export {
+  authService,
+  productService,
+  cartService,
+  userService
+};

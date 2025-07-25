@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice.js';
 import productsReducer from './slices/productsSlice.js';
 import cartReducer from './slices/cartSlice.js';
 import uiReducer from './slices/uiSlice.js';
+import userReducer from "./slices/usersSlice.js"
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     products: productsReducer,
     cart: cartReducer,
     ui: uiReducer,
+    users:userReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
