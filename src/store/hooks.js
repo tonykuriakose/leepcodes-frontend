@@ -1,92 +1,59 @@
 import { useDispatch, useSelector } from 'react-redux';
 
-
+// Custom hooks for typed usage
 export const useAppDispatch = () => useDispatch();
 export const useAppSelector = useSelector;
 
-
+// Auth-specific hooks
 export const useAuth = () => {
   return useAppSelector((state) => ({
     user: state.auth.user,
+    token: state.auth.token,
     isAuthenticated: state.auth.isAuthenticated,
     loading: state.auth.loading,
     error: state.auth.error,
     loginAttempted: state.auth.loginAttempted,
-    role: state.auth.user?.role,
   }));
 };
 
+// Cart-specific hooks
+export const useCart = () => {
+  return useAppSelector((state) => ({
+    items: state.cart.items,
+    totalItems: state.cart.totalItems,
+    totalAmount: state.cart.totalAmount,
+    loading: state.cart.loading,
+    error: state.cart.error,
+  }));
+};
+
+// Products-specific hooks
 export const useProducts = () => {
   return useAppSelector((state) => ({
     products: state.products.products,
     currentProduct: state.products.currentProduct,
-    lowStockProducts: state.products.lowStockProducts,
     loading: state.products.loading,
     error: state.products.error,
     pagination: state.products.pagination,
-    searchResults: state.products.searchResults,
-    searchLoading: state.products.searchLoading,
-    searchError: state.products.searchError,
-    searchPagination: state.products.searchPagination,
   }));
 };
 
-export const useCart = () => {
-  return useAppSelector((state) => ({
-    cart: state.cart.cart,
-    items: state.cart.cart?.items || [],
-    totalItems: state.cart.cart?.totalItems || 0,
-    totalAmount: state.cart.cart?.totalAmount || '0.00',
-    loading: state.cart.loading,
-    error: state.cart.error,
-    lastAction: state.cart.lastAction,
-    allCarts: state.cart.allCarts,
-    adminLoading: state.cart.adminLoading,
-    adminError: state.cart.adminError,
-    allCartsPagination: state.cart.allCartsPagination,
-  }));
-};
-
-export const useUI = () => {
-  return useAppSelector((state) => ({
-    globalLoading: state.ui.globalLoading,
-    notifications: state.ui.notifications,
-    modals: state.ui.modals,
-    sidebarOpen: state.ui.sidebarOpen,
-    mobileMenuOpen: state.ui.mobileMenuOpen,
-    theme: state.ui.theme,
-    filters: state.ui.filters,
-    currentPage: state.ui.currentPage,
-    viewMode: state.ui.viewMode,
-  }));
-};
-
-
-export const useProductModal = () => {
-  return useAppSelector((state) => state.ui.modals.productForm);
-};
-
-export const useUserModal = () => {
-  return useAppSelector((state) => state.ui.modals.userForm);
-};
-
-export const useConfirmDialog = () => {
-  return useAppSelector((state) => state.ui.modals.confirmDialog);
-};
-
-
+// Permission hooks based on user role
 export const usePermissions = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   
   return {
-    canCreateProduct: isAuthenticated && ['superadmin', 'admin'].includes(user?.role),
-    canUpdateProduct: isAuthenticated && ['superadmin', 'admin'].includes(user?.role),
-    canDeleteProduct: isAuthenticated && user?.role === 'superadmin',
-    canViewUsers: isAuthenticated && user?.role === 'superadmin',
-    canCreateAdmin: isAuthenticated && user?.role === 'superadmin',
-    canManageUsers: isAuthenticated && user?.role === 'superadmin',
-    canViewAllCarts: isAuthenticated && user?.role === 'superadmin',
-    isSuperAdmin: isAuthenticated && user?.role === 'superadmin',
-    isAdmin: isAuthenticated && ['superadmin', 'admin'].includes(user?.role),
+    // Role checks
+    isSuperAdmin: user?.role === 'superadmin',
+    isAdmin: user?.role === 'admin' || user?.role === 'superadmin',
+    
+    // Permission checks
+    canCreateProduct: user?.role === 'admin' || user?.role === 'superadmin',
+    canEditProduct: user?.role === 'admin' || user?.role === 'superadmin',
+    canDeleteProduct: user?.role === 'admin' || user?.role === 'superadmin',
+    canViewUsers: user?.role === 'superadmin',
+    canCreateUser: user?.role === 'superadmin',
+    canEditUser: user?.role === 'superadmin',
+    canDeleteUser: user?.role === 'superadmin',
   };
 };

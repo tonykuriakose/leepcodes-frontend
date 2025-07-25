@@ -1,23 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authSlice from './slices/authSlice.js';
-import productsSlice from './slices/productsSlice.js';
-import cartSlice from './slices/cartSlice.js';
-import uiSlice from './slices/uiSlice.js';
+import authReducer from './slices/authSlice.js';
+import productsReducer from './slices/productsSlice.js';
+import cartReducer from './slices/cartSlice.js';
+import uiReducer from './slices/uiSlice.js';
 
-// Configure Redux store
 export const store = configureStore({
   reducer: {
-    auth: authSlice,
-    products: productsSlice,
-    cart: cartSlice,
-    ui: uiSlice,
+    auth: authReducer,
+    products: productsReducer,
+    cart: cartReducer,
+    ui: uiReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore these action types for date/function serialization
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredActions: ['persist/PERSIST'],
       },
     }),
-  devTools: import.meta.env.DEV, // Enable Redux DevTools in development
+  devTools: process.env.NODE_ENV !== 'production',
 });
+
+export default store;

@@ -1,88 +1,74 @@
-import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import { store } from './store/index.js'
-import { useAppDispatch, useAuth } from './store/hooks.js'
-import { getProfile, setLoginAttempted } from './store/slices/authSlice.js'
-import { authService } from './services/index.js'
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useAppDispatch, useAuth } from './store/hooks.js';
+import { checkAuthStatus } from './store/slices/authSlice.js';
 
 // Import pages
-import LoginPage from './pages/LoginPage.jsx'
-import DashboardPage from './pages/DashboardPage.jsx'
-import LoadingSpinner from './components/LoadingSpinner.jsx'
+import LoginPage from './pages/LoginPage.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
+import ProductsPage from './pages/ProductsPage.jsx';
+import LoadingSpinner from './components/LoadingSpinner.jsx';
 
 // Protected Route Component
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, loginAttempted } = useAuth();
-
-  // Show loading while checking authentication
-  if (!loginAttempted) {
-    return <LoadingSpinner />;
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <LoadingSpinner />
+          <p className="text-gray-600 mt-2">Checking authentication...</p>
+        </div>
+      </div>
+    );
   }
+  
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+// Public Route Component (redirect to dashboard if already authenticated)
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <LoadingSpinner />
+          <p className="text-gray-600 mt-2">Loading...</p>
+        </div>
+      </div>
+    );
   }
+  
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
+};
 
-  return children;
-}
-
-// Public Route Component (redirect to dashboard if already logged in)
-function PublicRoute({ children }) {
-  const { isAuthenticated, loginAttempted } = useAuth();
-
-  // Show loading while checking authentication
-  if (!loginAttempted) {
-    return <LoadingSpinner />;
-  }
-
-  // Redirect to dashboard if already authenticated
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return children;
-}
-
-// App Content with Routes
-function AppContent() {
+function App() {
   const dispatch = useAppDispatch();
-  const { loginAttempted } = useAuth();
+  const { loading } = useAuth();
 
-  // Initialize app on mount
+  // Check authentication status on app load
   useEffect(() => {
-    const initializeApp = async () => {
-      // Check if user has a valid token and get profile
-      if (authService.isAuthenticated() && !authService.isTokenExpired()) {
-        try {
-          await dispatch(getProfile()).unwrap();
-        } catch (error) {
-          console.error('Failed to get profile:', error);
-          // Token might be invalid, clear it
-          authService.clearAuth();
-          dispatch(setLoginAttempted());
-        }
-      } else {
-        // No valid token or token expired
-        if (authService.isAuthenticated()) {
-          authService.clearAuth(); // Clear expired token
-        }
-        dispatch(setLoginAttempted()); // Stop loading spinner
-      }
-    };
-
-    initializeApp();
+    dispatch(checkAuthStatus());
   }, [dispatch]);
 
-  // Show loading spinner while initializing
-  if (!loginAttempted) {
-    return <LoadingSpinner />;
+  // Show loading screen while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <LoadingSpinner />
+          <p className="text-gray-600 mt-2">Loading application...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
+      <div className="App">
         <Routes>
           {/* Public Routes */}
           <Route 
@@ -103,25 +89,83 @@ function AppContent() {
               </ProtectedRoute>
             } 
           />
+          
+          <Route 
+            path="/products" 
+            element={
+              <ProtectedRoute>
+                <ProductsPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Cart Route (placeholder for now) */}
+          <Route 
+            path="/cart" 
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                  <div className="text-center">
+                    <h1 className="text-2xl font-bold text-gray-900 mb-4">Cart Page</h1>
+                    <p className="text-gray-600 mb-4">Cart functionality coming soon!</p>
+                    <button 
+                      onClick={() => window.history.back()}
+                      className="btn-primary"
+                    >
+                      Go Back
+                    </button>
+                  </div>
+                </div>
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Users Route (placeholder for now) */}
+          <Route 
+            path="/users" 
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                  <div className="text-center">
+                    <h1 className="text-2xl font-bold text-gray-900 mb-4">User Management</h1>
+                    <p className="text-gray-600 mb-4">User management functionality coming soon!</p>
+                    <button 
+                      onClick={() => window.history.back()}
+                      className="btn-primary"
+                    >
+                      Go Back
+                    </button>
+                  </div>
+                </div>
+              </ProtectedRoute>
+            } 
+          />
 
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          
-          {/* Catch all - redirect to dashboard */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+
+          {/* 404 Route */}
+          <Route 
+            path="*" 
+            element={
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+                  <p className="text-gray-600 mb-4">Page not found</p>
+                  <button 
+                    onClick={() => window.location.href = '/dashboard'}
+                    className="btn-primary"
+                  >
+                    Go to Dashboard
+                  </button>
+                </div>
+              </div>
+            } 
+          />
         </Routes>
       </div>
     </Router>
   );
 }
 
-// Main App Component with Redux Provider
-function App() {
-  return (
-    <Provider store={store}>
-      <AppContent />
-    </Provider>
-  );
-}
-
-export default App
+export default App;

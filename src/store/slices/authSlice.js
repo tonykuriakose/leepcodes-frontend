@@ -69,6 +69,41 @@ export const getProfile = createAsyncThunk(
   }
 );
 
+// NEW: Check authentication status on app load
+export const checkAuthStatus = createAsyncThunk(
+  'auth/checkAuthStatus',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      // Check if there's a token in localStorage
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        // No token, user is not authenticated
+        return { isAuthenticated: false };
+      }
+
+      // Token exists, try to get user profile
+      const result = await authService.getProfile();
+      
+      if (result.success) {
+        return {
+          isAuthenticated: true,
+          user: result.user,
+          token: token
+        };
+      } else {
+        // Token is invalid, clear it
+        localStorage.removeItem('token');
+        return { isAuthenticated: false };
+      }
+    } catch (error) {
+      // Error occurred, clear token and mark as not authenticated
+      localStorage.removeItem('token');
+      return { isAuthenticated: false };
+    }
+  }
+);
+
 export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, { rejectWithValue }) => {
@@ -194,6 +229,34 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false;
         state.loginAttempted = true;
+        state.user = null;
+        state.token = null;
+      });
+
+    // Check auth status
+    builder
+      .addCase(checkAuthStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(checkAuthStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.loginAttempted = true;
+        
+        if (action.payload.isAuthenticated) {
+          state.user = action.payload.user;
+          state.token = action.payload.token;
+          state.isAuthenticated = true;
+        } else {
+          state.user = null;
+          state.token = null;
+          state.isAuthenticated = false;
+        }
+        state.error = null;
+      })
+      .addCase(checkAuthStatus.rejected, (state) => {
+        state.loading = false;
+        state.loginAttempted = true;
+        state.isAuthenticated = false;
         state.user = null;
         state.token = null;
       });

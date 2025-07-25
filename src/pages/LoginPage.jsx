@@ -67,23 +67,31 @@ const LoginPage = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle form submission
+  // Handle form submission - FIXED VERSION
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    // Validate form first
     if (!validateForm()) {
       return;
     }
 
     try {
-      const result = await dispatch(loginUser(formData)).unwrap();
-      
-      // Success - user will be redirected by useEffect
-      console.log('Login successful:', result);
-      
+      // Dispatch login action
+      const result = await dispatch(loginUser({
+        email: formData.email,
+        password: formData.password
+      })).unwrap();
+
+      // DEBUG LOGS - These will show in browser console
+      console.log('🎉 Login successful:', result);
+      console.log('🔑 Token stored:', localStorage.getItem('token'));
+
+      // Navigate to dashboard on success
+      navigate('/dashboard', { replace: true });
     } catch (error) {
-      // Error is handled by Redux slice
-      console.error('Login failed:', error);
+      // Error handling is already done by Redux slice
+      console.error('❌ Login failed:', error);
     }
   };
 
@@ -170,7 +178,7 @@ const LoginPage = () => {
                 autoComplete="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className={`input-field ${formErrors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}`}
+                className={`input w-full ${formErrors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}`}
                 placeholder="Enter your email"
               />
               {formErrors.email && (
@@ -191,7 +199,7 @@ const LoginPage = () => {
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`input-field pr-10 ${formErrors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}`}
+                  className={`input w-full pr-10 ${formErrors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}`}
                   placeholder="Enter your password"
                 />
                 <button

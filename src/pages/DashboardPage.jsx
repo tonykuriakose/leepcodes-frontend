@@ -28,6 +28,19 @@ const DashboardPage = () => {
     }
   };
 
+  // Navigation handlers
+  const navigateToProducts = () => {
+    navigate('/products');
+  };
+
+  const navigateToCart = () => {
+    navigate('/cart');
+  };
+
+  const navigateToUsers = () => {
+    navigate('/users');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -45,10 +58,47 @@ const DashboardPage = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Product & Cart Management
-              </h1>
+            <div className="flex items-center space-x-8">
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">
+                  Product & Cart Management
+                </h1>
+              </div>
+              
+              {/* Navigation Links */}
+              <nav className="hidden md:flex space-x-6">
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={navigateToProducts}
+                  className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+                >
+                  Products
+                </button>
+                <button
+                  onClick={navigateToCart}
+                  className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors relative"
+                >
+                  Cart
+                  {totalItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {totalItems}
+                    </span>
+                  )}
+                </button>
+                {permissions.canViewUsers && (
+                  <button
+                    onClick={navigateToUsers}
+                    className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+                  >
+                    Users
+                  </button>
+                )}
+              </nav>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -157,9 +207,12 @@ const DashboardPage = () => {
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Products Management */}
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer">
+          <div 
+            onClick={navigateToProducts}
+            className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer group"
+          >
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
                 <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
@@ -177,15 +230,18 @@ const DashboardPage = () => {
                 : 'Browse and view product information.'
               }
             </p>
-            <button className="btn-primary w-full">
+            <div className="btn-primary w-full text-center">
               {permissions.canCreateProduct ? 'Manage Products' : 'View Products'}
-            </button>
+            </div>
           </div>
 
           {/* Cart Management */}
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer">
+          <div 
+            onClick={navigateToCart}
+            className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer group"
+          >
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
                 <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.6 8H19M7 13v8a2 2 0 002 2h8a2 2 0 002-2v-8m0 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4z" />
                 </svg>
@@ -200,16 +256,19 @@ const DashboardPage = () => {
             <p className="text-gray-600 mb-4">
               Manage your shopping cart and review selected items.
             </p>
-            <button className="btn-primary w-full">
+            <div className="btn-primary w-full text-center">
               View Cart
-            </button>
+            </div>
           </div>
 
           {/* User Management (Super Admin Only) */}
           {permissions.canViewUsers && (
-            <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer">
+            <div 
+              onClick={navigateToUsers}
+              className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer group"
+            >
               <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
                   <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-.025C15.766 15.97 14.926 16 14 16s-1.766-.03-2.5-.142" />
                   </svg>
@@ -222,11 +281,48 @@ const DashboardPage = () => {
               <p className="text-gray-600 mb-4">
                 Create and manage admin user accounts and permissions.
               </p>
-              <button className="btn-primary w-full">
+              <div className="btn-primary w-full text-center">
                 Manage Users
-              </button>
+              </div>
             </div>
           )}
+
+          {/* Quick Actions */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
+                <p className="text-sm text-gray-500">Common tasks</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <button 
+                onClick={navigateToProducts}
+                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
+              >
+                ➕ Add New Product
+              </button>
+              <button 
+                onClick={navigateToCart}
+                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
+              >
+                🛒 View Shopping Cart
+              </button>
+              {permissions.canViewUsers && (
+                <button 
+                  onClick={navigateToUsers}
+                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
+                >
+                  👥 Manage Users
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Debug Info (Development Only) */}
